@@ -81,7 +81,7 @@ This project is not just a portfolio — it demonstrates:
 ## 📸 Preview
 
 <p align="center">
-  <img src="./public//hero.asset/Hero.png" width="800" alt="Hero Preview"/>
+  <img src="./public/asset/Hero.png" width="800" alt="Hero Preview"/>
 </p>
 
 ---
