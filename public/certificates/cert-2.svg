@@ -1,0 +1,9 @@
+<svg width="1300" height="820" viewBox="0 0 1300 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1300" height="820" fill="#0E56B8"/>
+  <rect x="64" y="64" width="1172" height="692" rx="34" fill="#EEEBDD"/>
+  <text x="128" y="232" fill="#0E56B8" font-family="Arial Black" font-size="74">CLOUD PRACTITIONER</text>
+  <text x="128" y="316" fill="#0E56B8" font-family="Arial Black" font-size="74">ESSENTIALS</text>
+  <text x="130" y="430" fill="#355A92" font-family="Arial" font-size="36">Issued by AWS</text>
+  <rect x="128" y="500" width="360" height="94" rx="24" fill="#0E56B8"/>
+  <text x="176" y="560" fill="#EEEBDD" font-family="Arial Black" font-size="38">2024</text>
+</svg>
