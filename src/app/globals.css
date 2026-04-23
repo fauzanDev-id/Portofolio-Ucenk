@@ -44,6 +44,11 @@ body {
   letter-spacing: -0.07em;
 }
 
+.menu-display {
+  font-family: var(--font-cormorant), "Times New Roman", serif;
+  letter-spacing: -0.035em;
+}
+
 .grain-overlay::before {
   content: "";
   position: absolute;

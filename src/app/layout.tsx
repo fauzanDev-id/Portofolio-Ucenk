@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Anton, Cormorant_Garamond, Inter } from "next/font/google";
 import { CustomCursor } from "@/components/CustomCursor";
 import { PageTransition } from "@/components/PageTransition";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
@@ -16,6 +16,12 @@ const anton = Anton({
   subsets: ["latin"],
 });
 
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  weight: ["600", "700"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Fauzan Dzaki Ardyan | Portfolio",
   description: "Modern interactive portfolio crafted with Next.js and Framer Motion.",
@@ -27,7 +33,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${anton.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${anton.variable} ${cormorant.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-cream text-ink">
         <SmoothScrollProvider>
           <CustomCursor />
