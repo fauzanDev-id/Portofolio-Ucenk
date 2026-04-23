@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FloatingNav } from "@/components/FloatingNav";
+import { Navbar } from "@/components/Navbar";
 import { Preloader } from "@/components/Preloader";
 import { AboutSection } from "@/sections/AboutSection";
 import { CertificatesSection } from "@/sections/CertificatesSection";
@@ -22,7 +22,7 @@ export default function Home() {
         className={`transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
         aria-hidden={!ready}
       >
-        <FloatingNav />
+        <Navbar />
         <main>
           <HeroSection />
           <AboutSection />

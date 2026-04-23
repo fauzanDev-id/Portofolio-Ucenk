@@ -22,7 +22,7 @@ export function ContactSection() {
     <section id="contact" className="pb-28 pt-24 md:pb-36 md:pt-32">
       <div className="section-shell">
         <Reveal>
-          <h2 className="section-title text-brand-blue">Contact</h2>
+          <h2 className="section-title text-brand-blue">contact.</h2>
           <p className="mt-4 max-w-xl text-sm text-muted md:text-base">
             Let&apos;s build meaningful digital products together. Reach out for collaboration or opportunities.
           </p>

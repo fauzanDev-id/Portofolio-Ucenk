@@ -9,7 +9,7 @@ export function ExperienceSection() {
     <section id="experience" className="py-24 md:py-32">
       <div className="section-shell">
         <Reveal>
-          <h2 className="section-title text-brand-blue">Experience</h2>
+          <h2 className="section-title text-brand-blue">experience.</h2>
         </Reveal>
 
         <div className="relative mt-12 pl-8 md:pl-12">

@@ -13,7 +13,7 @@ export function CertificatesSection() {
     <section id="certificates" className="py-24 md:py-32">
       <div className="section-shell">
         <Reveal>
-          <h2 className="section-title text-brand-blue">Certificates</h2>
+          <h2 className="section-title text-brand-blue">certificates.</h2>
         </Reveal>
 
         <div className="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">

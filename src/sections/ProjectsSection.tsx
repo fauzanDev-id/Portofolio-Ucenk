@@ -14,7 +14,7 @@ export function ProjectsSection() {
       <div className="section-shell">
         <div className="lg:sticky lg:top-24 lg:z-10 lg:mb-16 lg:w-fit">
           <Reveal>
-            <h2 className="section-title text-brand-blue">Projects</h2>
+            <h2 className="section-title text-brand-blue">projects.</h2>
           </Reveal>
         </div>
 
