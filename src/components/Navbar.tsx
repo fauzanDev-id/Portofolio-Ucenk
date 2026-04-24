@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   motion,
   AnimatePresence,
@@ -9,26 +10,27 @@ import {
   useTransform,
   useMotionValue,
 } from "framer-motion";
+import { Magnetic } from "@/components/Magnetic";
 
 /* ─── Data ─────────────────────────────────────────────── */
 
 const navLinks = [
-  { id: "home", href: "#home", label: "Home" },
-  { id: "about", href: "#about", label: "About" },
-  { id: "skills", href: "#skills", label: "Skills" },
-  { id: "projects", href: "#projects", label: "Projects" },
-  { id: "certificates", href: "#certificates", label: "Certificates" },
-  { id: "experience", href: "#experience", label: "Experience" },
+  { id: "home", href: "/", label: "Home" },
+  { id: "about", href: "/#about", label: "About" },
+  { id: "skills", href: "/#skills", label: "Skills" },
+  { id: "projects", href: "/projects", label: "Projects" },
+  { id: "certificates", href: "/#certificates", label: "Certificates" },
+  { id: "experience", href: "/#experience", label: "Experience" },
 ];
 
 const fullMenuLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About Me" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#certificates", label: "Certificates" },
-  { href: "#experience", label: "Experience" },
-  { href: "#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/#about", label: "About Me" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/projects", label: "Projects" },
+  { href: "/#certificates", label: "Certificates" },
+  { href: "/#experience", label: "Experience" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 const socialLinks = [
@@ -161,6 +163,8 @@ const logoCharVariants = {
    ═══════════════════════════════════════════════════════ */
 
 export function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
@@ -287,9 +291,26 @@ export function Navbar() {
   const scrollToSection = useCallback(
     (e: React.MouseEvent, href: string) => {
       e.preventDefault();
-      const targetId = href.replace("#", "");
+
+      const isExternalPage = !href.startsWith("#") && !href.startsWith("/#") && href !== "/";
+      const isHashLink = href.includes("#");
+
+      if (isExternalPage) {
+        setMenuOpen(false);
+        setHoveredLink(null);
+        router.push(href);
+        return;
+      }
+
+      const targetId = href.split("#")[1] || "home";
       const elem = document.getElementById(targetId);
-      if (!elem) return;
+
+      if (!elem) {
+        setMenuOpen(false);
+        setHoveredLink(null);
+        router.push(href);
+        return;
+      }
 
       setMenuOpen(false);
       setHoveredLink(null);
@@ -302,7 +323,7 @@ export function Navbar() {
         window.scrollTo({ top: targetY, behavior: "smooth" });
       }, 350);
     },
-    []
+    [router]
   );
 
   /* --- Parallax gradient on mouse move inside overlay --- */
@@ -452,41 +473,43 @@ export function Navbar() {
           </nav>
 
           {/* Hamburger / Close Toggle */}
-          <button
-            className="relative z-70 flex h-10 w-10 items-center justify-center"
-            onClick={() => {
-              setHoveredLink(null);
-              setMenuOpen(!menuOpen);
-            }}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            aria-controls="fullscreen-menu"
-          >
-            <motion.span
-              animate={
-                menuOpen
-                  ? { rotate: 45, y: 0, width: 26 }
-                  : { rotate: 0, y: 0, width: 26 }
-              }
-              transition={{ duration: 0.4, ease: EASE_EXPO }}
-              className={`block h-[2.5px] rounded-full transition-colors duration-300 ${
-                menuOpen ? "bg-[#eeebde]" : "bg-[#0a224a]"
-              }`}
-              style={{ width: 26 }}
-            />
-            <motion.span
-              animate={
-                menuOpen
-                  ? { rotate: -45, y: 0, width: 26, opacity: 1 }
-                  : { rotate: 0, y: 0, width: 26, opacity: 0 }
-              }
-              transition={{ duration: 0.4, ease: EASE_EXPO }}
-              className={`absolute block h-[2.5px] rounded-full transition-colors duration-300 ${
-                menuOpen ? "bg-[#eeebde]" : "bg-[#0a224a]"
-              }`}
-              style={{ width: 26 }}
-            />
-          </button>
+          <Magnetic>
+            <button
+              className="relative z-70 flex h-10 w-10 items-center justify-center"
+              onClick={() => {
+                setHoveredLink(null);
+                setMenuOpen(!menuOpen);
+              }}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="fullscreen-menu"
+            >
+              <motion.span
+                animate={
+                  menuOpen
+                    ? { rotate: 45, y: 0, width: 26 }
+                    : { rotate: 0, y: 0, width: 26 }
+                }
+                transition={{ duration: 0.4, ease: EASE_EXPO }}
+                className={`block h-[2.5px] rounded-full transition-colors duration-300 ${
+                  menuOpen ? "bg-[#eeebde]" : "bg-[#0a224a]"
+                }`}
+                style={{ width: 26 }}
+              />
+              <motion.span
+                animate={
+                  menuOpen
+                    ? { rotate: -45, y: 0, width: 26, opacity: 1 }
+                    : { rotate: 0, y: 0, width: 26, opacity: 0 }
+                }
+                transition={{ duration: 0.4, ease: EASE_EXPO }}
+                className={`absolute block h-[2.5px] rounded-full transition-colors duration-300 ${
+                  menuOpen ? "bg-[#eeebde]" : "bg-[#0a224a]"
+                }`}
+                style={{ width: 26 }}
+              />
+            </button>
+          </Magnetic>
         </div>
       </motion.header>
 

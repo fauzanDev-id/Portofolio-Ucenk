@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Cormorant_Garamond, Inter } from "next/font/google";
-import { CustomCursor } from "@/components/CustomCursor";
+import { Cursor } from "@/components/Cursor";
 import { PageTransition } from "@/components/PageTransition";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import "./globals.css";
@@ -39,7 +39,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
         <SmoothScrollProvider>
-          <CustomCursor />
+          <Cursor />
           <PageTransition>{children}</PageTransition>
         </SmoothScrollProvider>
       </body>

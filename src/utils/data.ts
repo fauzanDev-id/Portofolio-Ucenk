@@ -9,8 +9,14 @@ export type Project = {
   title: string;
   category: string;
   description: string;
+  tagline: string;
+  overview: string;
+  problem: string;
+  solution: string;
+  highlight: string[];
+  tech: string[];
+  url: string;
   image: string;
-  stack: string[];
 };
 
 export type Certificate = {
@@ -53,28 +59,67 @@ export const skills: Skill[] = [
 
 export const projects: Project[] = [
   {
-    id: "atlas-finance",
-    title: "Atlas Finance Dashboard",
-    category: "Web App",
-    description: "A premium analytics dashboard with real-time market insights and immersive data storytelling.",
-    image: "/projects/project-1.svg",
-    stack: ["Next.js", "TypeScript", "Framer Motion", "Prisma"],
+    id: "parakelana",
+    title: "Parakelana Adventure Booking",
+    category: "Booking System",
+    description: "A modern outdoor gear rental platform designed to simplify booking and equipment management.",
+    tagline: "Outdoor gear rental platform",
+    overview:
+      "Parakelana is built to make adventure gear rental faster, clearer, and more reliable for both customers and operators.",
+    problem:
+      "Manual booking and stock tracking created delays, booking conflicts, and slow payment verification.",
+    solution:
+      "Built a real-time booking flow with automated payment confirmation and a centralized admin dashboard for inventory and orders.",
+    highlight: [
+      "Real-time booking system",
+      "Payment confirmation automation",
+      "Admin dashboard for inventory and orders",
+    ],
+    tech: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS"],
+    url: "https://parakelana-adventure-booking.vercel.app/",
+    image: "/asset/parakelana/page_parakelana.png",
   },
   {
-    id: "nova-commerce",
-    title: "Nova Commerce Experience",
-    category: "E-Commerce",
-    description: "A high-conversion storefront with cinematic product browsing and seamless checkout flow.",
-    image: "/projects/project-2.svg",
-    stack: ["Next.js", "Stripe", "Tailwind", "PostgreSQL"],
+    id: "ucenk-theme",
+    title: "Ucenk Theme",
+    category: "Creative Theme",
+    description: "A modern visual theme system focused on expressive interactions and polished UI consistency.",
+    tagline: "Immersive visual theme experience",
+    overview:
+      "Ucenk Theme showcases a distinctive visual language with cinematic motion and carefully tuned component styling.",
+    problem:
+      "Generic template aesthetics made branding inconsistent and less memorable across pages.",
+    solution:
+      "Designed a cohesive theme architecture with reusable visual tokens, dynamic sections, and smooth interaction patterns.",
+    highlight: [
+      "Consistent design token system",
+      "Cinematic transitions and micro-interactions",
+      "Reusable UI blocks for fast iteration",
+    ],
+    tech: ["Next.js", "Framer Motion", "Tailwind CSS", "TypeScript"],
+    url: "https://ucenk-theme.vercel.app/",
+    image: "/asset/Ucenk_Theme/page_Ucenk_Theme.png",
   },
   {
-    id: "studio-echo",
-    title: "Studio Echo Portfolio",
-    category: "Creative Site",
-    description: "An Awwwards-inspired portfolio system built for visual narratives and smooth interactions.",
-    image: "/projects/project-3.svg",
-    stack: ["Next.js", "Framer Motion", "Lenis", "GSAP"],
+    id: "gimap-simda",
+    title: "GIMAP SIMDA",
+    category: "Government Information System",
+    description: "A data service platform supporting municipal workflow and structured public sector information access.",
+    tagline: "Scalable civic information platform",
+    overview:
+      "GIMAP SIMDA delivers structured data access and operational clarity for institutional users in a government environment.",
+    problem:
+      "Legacy workflows made data retrieval fragmented and difficult to manage across teams.",
+    solution:
+      "Implemented a centralized interface with clearer data pathways, better role-based usability, and streamlined access.",
+    highlight: [
+      "Structured data navigation",
+      "Operational dashboard flow",
+      "Improved clarity for administrative users",
+    ],
+    tech: ["PHP", "JavaScript", "MySQL", "Bootstrap"],
+    url: "https://gimap.simda.net/",
+    image: "/asset/GI/image.png",
   },
 ];
 

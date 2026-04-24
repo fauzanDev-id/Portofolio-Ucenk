@@ -5,13 +5,15 @@ import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from
 import { Reveal } from "@/components/Reveal";
 import { skills } from "@/utils/data";
 
+type Skill = (typeof skills)[number];
+
 function SkillCard({ 
   skill, 
   index, 
   hoveredIndex, 
   setHoveredIndex 
 }: { 
-  skill: any; 
+  skill: Skill; 
   index: number; 
   hoveredIndex: number | null; 
   setHoveredIndex: (idx: number | null) => void;
@@ -34,16 +36,16 @@ function SkillCard({
   const y = useMotionValue(0);
 
   // Extremely smooth premium springs
-  const mouseXSpring = useSpring(x, { stiffness: 200, damping: 25 });
-  const mouseYSpring = useSpring(y, { stiffness: 200, damping: 25 });
+  const mouseXSpring = useSpring(x, { stiffness: 120, damping: 20, mass: 0.5 });
+  const mouseYSpring = useSpring(y, { stiffness: 120, damping: 20, mass: 0.5 });
 
   // 3D Tilt Effect - slightly amplified
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["6deg", "-6deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-6deg", "6deg"]);
 
   // Magnetic Shift
-  const magneticX = useTransform(mouseXSpring, [-0.5, 0.5], ["-3%", "3%"]);
-  const magneticY = useTransform(mouseYSpring, [-0.5, 0.5], ["-3%", "3%"]);
+  const magneticX = useTransform(mouseXSpring, [-0.5, 0.5], ["-1.5%", "1.5%"]);
+  const magneticY = useTransform(mouseYSpring, [-0.5, 0.5], ["-1.5%", "1.5%"]);
 
   // Deep Parallax Layers
   const layer1X = useTransform(mouseXSpring, [-0.5, 0.5], ["-6px", "6px"]);
@@ -52,18 +54,19 @@ function SkillCard({
   const layer2X = useTransform(mouseXSpring, [-0.5, 0.5], ["-12px", "12px"]);
   const layer2Y = useTransform(mouseYSpring, [-0.5, 0.5], ["-12px", "12px"]);
 
-  const layer3X = useTransform(mouseXSpring, [-0.5, 0.5], ["-20px", "20px"]);
-  const layer3Y = useTransform(mouseYSpring, [-0.5, 0.5], ["-20px", "20px"]);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current || isMobile) return;
     const rect = cardRef.current.getBoundingClientRect();
     
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    
-    x.set(mouseX / rect.width - 0.5);
-    y.set(mouseY / rect.height - 0.5);
+
+    const px = mouseX / rect.width - 0.5;
+    const py = mouseY / rect.height - 0.5;
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+    x.set(clamp(px, -0.3, 0.3));
+    y.set(clamp(py, -0.3, 0.3));
     
     setMousePos({ x: mouseX, y: mouseY });
   };
@@ -94,7 +97,7 @@ function SkillCard({
         opacity: isOtherHovered ? 0.45 : 1,
         y: isHovered ? -12 : 0,
       }}
-      className="relative z-10 block h-full [perspective:1200px]"
+      className="relative z-10 block h-full perspective-distant"
       data-cursor="view"
       style={{ zIndex: isHovered ? 50 : 10 }}
     >
@@ -105,13 +108,13 @@ function SkillCard({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="pointer-events-none absolute -inset-[150%] -z-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(9,44,102,0.15)_0%,transparent_50%)] blur-2xl"
+            className="pointer-events-none absolute inset-[-80%] -z-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(9,44,102,0.15)_0%,transparent_50%)] blur-2xl"
           />
         )}
       </AnimatePresence>
 
       <motion.article
-        className={`group relative flex h-[340px] flex-col overflow-hidden rounded-[2.5rem] border border-brand-blue/15 bg-cream/30 p-8 shadow-[0_15px_50px_-15px_rgba(9,44,102,0.08)] backdrop-blur-2xl transition-shadow duration-700 md:h-[380px] md:p-10 ${
+        className={`group relative flex h-72 flex-col overflow-hidden rounded-4xl border border-brand-blue/15 bg-cream/30 p-6 shadow-[0_15px_50px_-15px_rgba(9,44,102,0.08)] backdrop-blur-2xl transition-shadow duration-700 md:h-80 md:p-7 ${
           isHovered ? "border-brand-blue/30 shadow-[0_30px_80px_-20px_rgba(9,44,102,0.25)]" : ""
         }`}
         style={{
@@ -120,10 +123,11 @@ function SkillCard({
           x: isMobile ? 0 : magneticX,
           y: isMobile ? 0 : magneticY,
           transformStyle: "preserve-3d",
+          willChange: "transform",
         }}
       >
         {/* Inner subtle rim light */}
-        <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-white/40" />
+        <div className="pointer-events-none absolute inset-0 rounded-4xl ring-1 ring-inset ring-white/40" />
 
         {/* Dynamic Light Sweep tracking mouse */}
         <motion.div
@@ -138,22 +142,20 @@ function SkillCard({
           style={{ x: isMobile ? 0 : layer1X, y: isMobile ? 0 : layer1Y, z: isMobile ? 0 : 20 }} 
           className="relative z-10 flex h-full flex-col"
         >
-          {/* Layer 3: Title (fastest/highest) */}
           <motion.h3 
-            style={{ x: isMobile ? 0 : layer3X, y: isMobile ? 0 : layer3Y, z: isMobile ? 0 : 70 }}
-            className="text-xl font-bold uppercase tracking-[0.1em] text-[#0a224a] md:text-2xl drop-shadow-sm"
+            className="text-lg font-bold uppercase tracking-widest text-[#0a224a] md:text-xl drop-shadow-sm"
           >
             {skill.title}
           </motion.h3>
           
-          <p className="mt-4 flex-1 text-[0.95rem] leading-relaxed text-[#0a224a]/80 md:text-[1.05rem]">
+          <p className="mt-3 flex-1 text-[0.9rem] leading-relaxed text-[#0a224a]/80 md:text-[0.95rem]">
             {skill.description}
           </p>
 
           {/* Layer 2: Progress Bar (mid layer) */}
           <motion.div 
             style={{ x: isMobile ? 0 : layer2X, y: isMobile ? 0 : layer2Y, z: isMobile ? 0 : 45 }}
-            className="mt-10"
+            className="mt-7"
           >
             <div className="mb-4 flex items-center justify-between text-[0.7rem] font-bold uppercase tracking-[0.15em] text-[#0a224a]">
               <span>Proficiency</span>
@@ -163,16 +165,16 @@ function SkillCard({
             <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-brand-blue/15 shadow-inner">
               {/* The filled bar */}
               <motion.div
-                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#0a224a]/80 to-[#0a224a] shadow-[0_0_12px_rgba(10,34,74,0.6)]"
+                className="absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-[#0a224a]/80 to-[#0a224a] shadow-[0_0_12px_rgba(10,34,74,0.6)]"
                 initial={{ width: 0 }}
                 whileInView={{ width: `${skill.level}%` }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.15 + 0.3 }}
+                transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: index * 0.12 + 0.2 }}
               >
                 {/* Infinite sweeping light ray over the progress bar on hover */}
                 {isHovered && (
                   <motion.div
-                    className="absolute inset-0 z-20 w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent blur-[2px]"
+                    className="absolute inset-0 z-20 w-1/2 bg-linear-to-r from-transparent via-white/50 to-transparent blur-[2px]"
                     animate={{ x: ["-150%", "300%"] }}
                     transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
                   />
@@ -190,7 +192,7 @@ export function SkillsSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section id="skills" className="relative z-10 overflow-hidden bg-cream py-24 md:py-36">
+    <section id="skills" className="relative z-10 overflow-hidden bg-cream py-16 md:py-20">
       <div className="section-shell">
         <Reveal>
           <div className="flex flex-col items-start">
@@ -202,12 +204,11 @@ export function SkillsSection() {
         </Reveal>
 
         {/* Broken grid layout for asymmetrical, handcrafted feel */}
-        <div className="mt-20 grid gap-8 md:grid-cols-2 lg:gap-10">
+        <div className="mt-12 grid gap-6 md:grid-cols-2 md:gap-6 lg:gap-8">
           {skills.map((skill, idx) => (
             <div 
               key={skill.title} 
-              // Offset alternating cards
-              className={`${idx % 2 === 1 ? "md:mt-24" : "md:-mt-12"}`}
+              className=""
             >
               <SkillCard 
                 skill={skill} 

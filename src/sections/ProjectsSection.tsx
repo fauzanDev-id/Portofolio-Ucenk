@@ -1,102 +1,133 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/Reveal";
-import { projects, type Project } from "@/utils/data";
+import { projects } from "@/utils/data";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+const EASE_EXPO: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export function ProjectsSection() {
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const router = useRouter();
+  const [maxShift, setMaxShift] = useState(0);
+  const containerRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const x = useTransform(scrollYProgress, [0, 1], [0, -maxShift]);
+  const trackScale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const updateShift = () => {
+      const viewportWidth = window.innerWidth;
+      const totalWidth = track.scrollWidth;
+      const shift = Math.max(totalWidth - viewportWidth, 0);
+      setMaxShift(shift);
+    };
+
+    updateShift();
+
+    const resizeObserver = new ResizeObserver(updateShift);
+    resizeObserver.observe(track);
+    window.addEventListener("resize", updateShift);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateShift);
+    };
+  }, []);
 
   return (
-    <section id="projects" className="py-24 md:py-32">
-      <div className="section-shell">
-        <div className="lg:sticky lg:top-24 lg:z-10 lg:mb-16 lg:w-fit">
+    <section id="projects" ref={containerRef} className="relative h-[300vh] bg-cream">
+      <div className="sticky top-0 h-screen overflow-hidden">
+        <div className="section-shell pt-10 md:pt-14 flex items-end justify-between">
           <Reveal>
             <h2 className="section-title text-brand-blue">projects.</h2>
           </Reveal>
-        </div>
-
-        <div className="grid gap-7">
-          {projects.map((project) => (
-            <Reveal key={project.id}>
-              <button
-                type="button"
-                onClick={() => setActiveProject(project)}
-                className="group relative block w-full overflow-hidden rounded-[2rem] border border-brand-blue/20"
-                data-cursor="open"
-              >
-                <div className="relative h-[300px] md:h-[460px]">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    loading="lazy"
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-blue/85 via-brand-blue/20 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-100" />
-
-                  <motion.div
-                    className="absolute bottom-0 left-0 right-0 p-5 text-left text-cream md:p-8"
-                    initial={{ y: 36, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.65 }}
-                  >
-                    <p className="text-xs uppercase tracking-[0.25em] md:text-sm">{project.category}</p>
-                    <h3 className="mt-2 text-2xl font-semibold md:text-4xl">{project.title}</h3>
-                    <p className="mt-3 max-w-2xl text-sm text-cream/85 md:text-base">{project.description}</p>
-                  </motion.div>
-                </div>
-              </button>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {activeProject && (
-          <motion.div
-            className="fixed inset-0 z-[110] grid place-items-center bg-ink/65 px-4 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActiveProject(null)}
-          >
-            <motion.article
-              className="glass-panel w-full max-w-3xl rounded-3xl p-5 md:p-8"
-              initial={{ y: 60, opacity: 0, scale: 0.95 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 50, opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.45 }}
-              onClick={(e) => e.stopPropagation()}
+          
+          <Reveal delay={0.2}>
+            <Link 
+              href="/projects" 
+              className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-blue/60 transition-colors hover:text-brand-blue mb-4 md:mb-6"
             >
-              <div className="relative h-[220px] overflow-hidden rounded-2xl md:h-[330px]">
-                <Image src={activeProject.image} alt={activeProject.title} fill className="object-cover" />
-              </div>
+              View all <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </Reveal>
+        </div>
 
-              <div className="mt-5">
-                <p className="text-xs uppercase tracking-[0.18em] text-brand-blue">{activeProject.category}</p>
-                <h3 className="mt-2 text-2xl font-bold text-ink md:text-3xl">{activeProject.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted md:text-base">{activeProject.description}</p>
+        <motion.div
+          ref={trackRef}
+          style={{ x, scale: trackScale }}
+          className="mt-8 flex gap-8 px-6 md:mt-12 md:gap-10 md:px-10"
+        >
+          {projects.map((project, index) => (
+            <motion.div
+              key={project.id}
+              layoutId={`card-${project.id}`}
+              onClick={() => router.push(`/projects/${project.id}`)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  router.push(`/projects/${project.id}`);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              whileHover={{ y: -8, scale: 1.015 }}
+              transition={{ duration: 0.5, ease: EASE_EXPO }}
+              className="group relative h-[62vh] w-[78vw] min-w-160 max-w-245 shrink-0 cursor-pointer overflow-hidden rounded-4xl border border-brand-blue/20 bg-[#0f2344]"
+              data-cursor="open"
+            >
+              <motion.div className="relative h-full w-full overflow-hidden">
+                <motion.div
+                  className="h-full w-full"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 1.1, ease: EASE_EXPO }}
+                >
+                  <motion.div
+                    className="relative h-full w-full"
+                    initial={{ scale: 1.01 }}
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 1.1, ease: EASE_EXPO }}
+                  >
+                    <Image
+                      src={project.image}
+                      alt={`Website preview ${project.title}`}
+                      fill
+                      loading="lazy"
+                      className="object-cover object-top"
+                    />
+                  </motion.div>
+                </motion.div>
 
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  {activeProject.stack.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-full border border-brand-blue/25 px-3 py-1 text-xs font-semibold uppercase tracking-[0.09em] text-brand-blue"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.article>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071934]/95 via-[#0a2244]/40 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-100" />
+
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 p-6 text-left text-cream md:p-10"
+                  initial={{ y: 16, opacity: 0.8 }}
+                  whileHover={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: EASE_EXPO }}
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-cream/65 mb-1">
+                    {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                  </p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cream/75 mb-2">{project.category}</p>
+                  <h3 className="text-xl font-bold leading-tight md:text-3xl tracking-tight">{project.title}</h3>
+                  <p className="mt-2.5 text-xs md:text-sm text-cream/75 leading-relaxed">{project.tagline}</p>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </section>
   );
 }
